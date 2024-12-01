@@ -24,6 +24,7 @@ namespace AoC24.Solutions{
 			StringUtils s = new StringUtils();
 			
 			foreach (string line in input){
+				//note modified input file from three spaces between each value to a single tab
 				string[] t = s.SplitByChar(line, '	');
 				left.Add(t[0]);
 				right.Add(t[1]);
@@ -53,6 +54,7 @@ namespace AoC24.Solutions{
 			StringUtils s = new StringUtils();
 			
 			foreach (string line in input){
+				//note modified input file from three spaces between each value to a single tab
 				string[] t = s.SplitByChar(line, '	');
 				left.Add(t[0]);
 				right.Add(t[1]);
