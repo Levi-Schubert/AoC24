@@ -30,10 +30,15 @@ namespace AoC24.Solutions{
 		}
 
 		public string PartTwo(List<string> input){
-			int distance = 0;
+			List<Report> reports = new List<Report>();
 
+			StringUtils sUtil = new StringUtils();
+			foreach(string line in input){
+				string[] data = sUtil.SplitByChar(line, ' ');
+				reports.Add(new Report(data, true));
+			}
 			
-			return distance.ToString();
+			return reports.Where(r => r.safe).Count().ToString();
 		}
 
 
@@ -41,33 +46,30 @@ namespace AoC24.Solutions{
 			public List<int> levels;
 			public bool safe;
 
-			public Report(string[] input){
+			public Report(string[] input, bool partTwo = false){
 				this.levels = new List<int>();
 				foreach(string s in input){
 					this.levels.Add(Int32.Parse(s));
 				}
-				this.safe = this.IsSafe();
+				if(partTwo){
+					this.safe = this.IsSafePartTwo();
+				}else{
+					this.safe = this.IsSafe(this.levels);
+				}
 			}
 
-			public bool IsSafe(){
+			public bool IsSafe(List<int> items){
 				bool safe = true;
-
 				bool? decreasing = null;
 
-				int largestDiff = 0;
-				int smallestDiff = 0;
+				for(int iter = 0; iter < items.Count - 1; iter += 1){
+					int currentChange = items[iter] - items[iter + 1];
 
-				for(int iter = 0; iter < this.levels.Count - 1; iter += 1){
-					int currentChange = this.levels[iter] - this.levels[iter + 1];
-					//if valid change amount
-					if(currentChange > largestDiff){largestDiff = currentChange;}
-					if(currentChange < smallestDiff){smallestDiff = currentChange;}
-				
 					if(decreasing == null){
 						if(currentChange > 0){
-							decreasing = true;
+							decreasing = true; //current change numbers will be positive for a safe value
 						}else{
-							decreasing = false;
+							decreasing = false; //current change numbers will be negative for a safe value
 						}
 					}
 					if(decreasing == false && (currentChange < -3 || currentChange >= 0)){
@@ -80,15 +82,27 @@ namespace AoC24.Solutions{
 					}
 				}
 
-				if((smallestDiff < -3 || largestDiff > 3) && safe == true){
-					if(decreasing == true){
-						Console.WriteLine($"is safe: {safe} | decreasing: {decreasing} | highest: {largestDiff} [{String.Join(", ", this.levels.ToArray())}]");
-					}else{
-						Console.WriteLine($"is safe: {safe} | decreasing: {decreasing} | lowest: {smallestDiff} [{String.Join(", ", this.levels.ToArray())}]");
-					}
-				}
-
 				return safe;
+			}
+
+			public bool IsSafePartTwo(){
+				if(!this.IsSafe(this.levels)){
+					
+					bool isSafe = false;
+					//brute forcing all variations of each failed index because I'm lazy and I was definitely missing a case with the more clever solution I was trying to use
+					for(int i = 0; i < this.levels.Count; i += 1){
+						List<int> temp = new List<int>(this.levels);
+						temp.RemoveAt(i);
+						if(this.IsSafe(temp)){
+							isSafe = true;
+							break;
+						}
+					}
+
+					return isSafe;
+				}else{
+					return true;
+				}
 			}
 		}
 	}

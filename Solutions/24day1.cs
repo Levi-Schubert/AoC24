@@ -47,8 +47,6 @@ namespace AoC24.Solutions{
 		}
 
 		public string PartTwo(List<string> input){
-			int distance = 0;
-
 			List<string> left = new List<string>();
 			List<string> right = new List<string>();
 

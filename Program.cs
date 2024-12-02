@@ -55,7 +55,7 @@ namespace AoC24{
 			FileUtils files = new FileUtils();
 			List<string> input = files.ReadLinesFromFile(filename);
 
-			Solver solver = null;
+			Solver? solver = null;
 
 			switch (day){
 				case 8:
@@ -85,7 +85,7 @@ namespace AoC24{
 			FileUtils files = new FileUtils();
 			List<string> input = files.ReadLinesFromFile(filename);
 
-			Solver solver = null;
+			Solver? solver = null;
 
 			switch (day){
 				case 1:
