@@ -26,13 +26,13 @@ namespace AoC24{
 			Console.WriteLine($"answer: {answer} \nobtained in: {timeTaken}");
 		}
 
-		static string GetFileName(int year, int day, int part){
-			return $"./inputs/{year}-{day}-{part}.txt";
+		static string GetFileName(int year, int day){
+			return $"./inputs/{year}-{day}.txt";
 		}
 
 		static string GetSolution(int year, int day, int part){
 			string answer;
-			string filename = GetFileName(year, day, part);
+			string filename = GetFileName(year, day);
 
 			switch (year){
 				case 24:
