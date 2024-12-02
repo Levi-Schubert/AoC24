@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using AoC24.Utils;
+using AoC24.Models;
 
 namespace AoC24.Solutions{
-	public class TwentyFourDayOne{
+	public class TwentyFourDayOne : Solver{
 		public string Solve(List<string> input, int part = 1){
 			string answer = "";
 
