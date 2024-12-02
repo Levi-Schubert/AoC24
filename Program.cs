@@ -5,6 +5,7 @@ using System.Threading;
 
 using AoC24.Utils;
 using AoC24.Solutions;
+using AoC24.Models;
 
 namespace AoC24{
 
@@ -25,13 +26,13 @@ namespace AoC24{
 			Console.WriteLine($"answer: {answer} \nobtained in: {timeTaken}");
 		}
 
-		static string GetFileName(int year, int day, int part){
-			return $"./inputs/{year}-{day}-{part}.txt";
+		static string GetFileName(int year, int day){
+			return $"./inputs/{year}-{day}.txt";
 		}
 
 		static string GetSolution(int year, int day, int part){
 			string answer;
-			string filename = GetFileName(year, day, part);
+			string filename = GetFileName(year, day);
 
 			switch (year){
 				case 24:
@@ -54,18 +55,25 @@ namespace AoC24{
 			FileUtils files = new FileUtils();
 			List<string> input = files.ReadLinesFromFile(filename);
 
+			Solver? solver = null;
+
 			switch (day){
 				case 8:
-					TwentyThreeDayEight solver = new TwentyThreeDayEight();
-					if(part == 1){
-						answer = solver.Solve(input);
-					}else{
-						answer = solver.Solve(input, 2);
-					}
+					solver = new TwentyThreeDayEight();
 					break;
 				default:
 					answer = "invalid day";
 					break;
+			}
+
+			if(solver != null){
+				if(part == 1){
+					answer = solver.Solve(input);
+				}else{
+					answer = solver.Solve(input, 2);
+				}
+			}else{
+				answer = "no solver found";
 			}
 
 			return answer;
@@ -77,18 +85,28 @@ namespace AoC24{
 			FileUtils files = new FileUtils();
 			List<string> input = files.ReadLinesFromFile(filename);
 
+			Solver? solver = null;
+
 			switch (day){
 				case 1:
-					TwentyFourDayOne solver = new TwentyFourDayOne();
-					if(part == 1){
-						answer = solver.Solve(input);
-					}else{
-						answer = solver.Solve(input, 2);
-					}
+					solver = new TwentyFourDayOne();
+					break;
+				case 2:
+					solver = new TwentyFourDayTwo();
 					break;
 				default:
 					answer = "invalid day";
 					break;
+			}
+
+			if(solver != null){
+				if(part == 1){
+					answer = solver.Solve(input);
+				}else{
+					answer = solver.Solve(input, 2);
+				}
+			}else{
+				answer = "no solver found";
 			}
 
 			return answer;
