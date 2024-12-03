@@ -50,14 +50,16 @@ namespace AoC24.Solutions{
 				string s = line.Trim(_unusedPt2);
 				Match m = reg.Match(s);
 				while(m.Success){
-					if(m.Value == "do()"){
-						shouldDo = true;
-					}
-					if(m.Value == "don't()"){
-						shouldDo = false;
-					}
-					if(m.Value.Contains("mul") && shouldDo){
-						total += ParseMultiply(m.Value);
+					switch(m.Value){
+						case "do()":
+							shouldDo = true;
+							break;
+						case "don't()":
+							shouldDo = false;
+							break;
+						default:
+							if(shouldDo){total += ParseMultiply(m.Value);}
+							break;
 					}
 					m = m.NextMatch();
 				}
