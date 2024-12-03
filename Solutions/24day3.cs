@@ -7,7 +7,9 @@ namespace AoC24.Solutions{
 	public class TwentyFourDayThree : Solver{
 
 		protected string _pattern = "([m])([u])([l])([(])([0-9]+)([,])([0-9]+)([)])";
+		protected string _patternPt2 = "(([m])([u])([l])([(])([0-9]+)([,])([0-9]+)([)]))|(([d])([o])([(])([)]))|(([d])([o])([n])(['])([t])([(])([)]))";
 		protected char[] _unused = ['>', '#', 'a', '+', 'i', ';', 'y', '^', 'f', 'n', '[', '@', '~', 'c', '-', 's', '{', '*', 'h', 'p', ':', ']', '\'', 'e', '/', '?', '}', 'b', ',', '%', 'r', '<', '!', 'o', ' ', 'w', '&', 'd', '$', 't'];
+		protected char[] _unusedPt2 = ['>', '#', 'a', '+', 'i', ';', 'y', '^', 'f', '[', '@', '~', 'c', '-', 's', '{', '*', 'h', 'p', ':', ']', 'e', '/', '?', '}', 'b', ',', '%', 'r', '<', '!', ' ', 'w', '&', '$'];
 
 
 		public string Solve(List<string> input, int part = 1){
@@ -39,9 +41,29 @@ namespace AoC24.Solutions{
 		}
 
 		public string PartTwo(List<string> input){
-			
+			var reg = new Regex(_patternPt2, RegexOptions.IgnoreCase);
 
-			return "NOT IMPLEMENTED";
+			bool shouldDo = true;
+
+			int total = 0;
+			input.ForEach(line => {
+				string s = line.Trim(_unusedPt2);
+				Match m = reg.Match(s);
+				while(m.Success){
+					if(m.Value == "do()"){
+						shouldDo = true;
+					}
+					if(m.Value == "don't()"){
+						shouldDo = false;
+					}
+					if(m.Value.Contains("mul") && shouldDo){
+						total += ParseMultiply(m.Value);
+					}
+					m = m.NextMatch();
+				}
+			});
+
+			return total.ToString();
 		}
 
 		private int ParseMultiply(string s){
