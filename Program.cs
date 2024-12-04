@@ -67,11 +67,7 @@ namespace AoC24{
 			}
 
 			if(solver != null){
-				if(part == 1){
-					answer = solver.Solve(input);
-				}else{
-					answer = solver.Solve(input, 2);
-				}
+				answer = solver.Solve(input, part);
 			}else{
 				answer = "no solver found";
 			}
@@ -97,17 +93,16 @@ namespace AoC24{
 				case 3:
 					solver = new TwentyFourDayThree();
 					break;
+				case 4:
+					solver = new TwentyFourDayFour();
+					break;
 				default:
 					answer = "invalid day";
 					break;
 			}
 
 			if(solver != null){
-				if(part == 1){
-					answer = solver.Solve(input);
-				}else{
-					answer = solver.Solve(input, 2);
-				}
+				answer = solver.Solve(input, part);
 			}else{
 				answer = "no solver found";
 			}
