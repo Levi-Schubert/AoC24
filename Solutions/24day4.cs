@@ -20,37 +20,65 @@ namespace AoC24.Solutions{
 		public string PartOne(List<string> input){
 			List<List<char>> puzzle = Get2dCharArray(input);
 			
-			int count = CheckForMatches(puzzle);
-
-			return $"{count}";
-		}
-
-		public string PartTwo(List<string> input){
-			return "NOT IMPLEMENTED";
-		}
-
-
-		private int CheckForMatches(List<List<char>> puzzle){
 			int total = 0;
 
 			int m = puzzle.Count;
 			int n = puzzle[0].Count;
 
 			for (int i = 0; i < m; i += 1){
-				int rowcount = 0;
 				for (int j = 0; j < n; j += 1){
 					if(puzzle[i][j] == 'X'){
 						int finds = Dfs(puzzle, i, j);
 						total += finds;
-						rowcount += finds;
-							//Console.WriteLine($"match found start index [{i},{j}]");
 					}
 				}
 			}
 
-
-			return total;
+			return $"{total}";
 		}
+
+		public string PartTwo(List<string> input){
+			List<List<char>> puzzle = Get2dCharArray(input);
+			
+			int total = 0;
+
+			int m = puzzle.Count;
+			int n = puzzle[0].Count;
+
+			for (int i = 0; i < m; i += 1){
+				for (int j = 0; j < n; j += 1){
+					if(puzzle[i][j] == 'A'){
+						if(CheckForXMAS(puzzle, i, j)){
+							total += 1;
+						}
+					}
+				}
+			}
+
+			return $"{total}";
+		}
+
+		private bool CheckForXMAS(List<List<char>> puzzle, int i, int j){
+			//bounds check
+			if (i - 1 < 0 || i + 1 >= puzzle.Count || j - 1 < 0 || j + 1 >= puzzle[0].Count) {
+				return false;
+			}
+			char nw = puzzle[i-1][j-1];
+			char ne = puzzle[i+1][j-1];
+			char sw = puzzle[i-1][j+1];
+			char se = puzzle[i+1][j+1];
+
+			bool isXMAS = false;
+			if ((nw == 'M' && se == 'S' && ne == 'M' && sw == 'S')
+				|| (nw == 'S' && se == 'M' && ne == 'S' && sw == 'M')
+				|| (nw == 'S' && se == 'M' && ne == 'M' && sw == 'S')
+				|| (nw == 'M' && se == 'S' && ne == 'S' && sw == 'M')){
+				isXMAS = true;
+			}
+
+			return isXMAS;
+		}
+
 
 		private int Dfs(List<List<char>> puzzle, int i, int j){
 
@@ -111,15 +139,10 @@ namespace AoC24.Solutions{
 					found = false;
 					break;
 			}
-			
-
 			puzzle[i][j] = temp;  // unmark
 
 			return found;
 		}
-
-		
-
 
 		private List<List<char>> Get2dCharArray(List<string> input){
 			List<List<char>> puzzle = new List<List<char>>();
