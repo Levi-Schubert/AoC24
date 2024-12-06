@@ -20,7 +20,7 @@ namespace AoC24.Solutions{
 		public string PartOne(List<string> input){
 			int total = 0;
 
-			(List<PageOrder> pageOrders, List<int[]> validGroups, List<(IEnumerable<PageOrder>, int[])> invalidGroups) = GetPageOrdersAndLists(input);
+			(List<int[]> validGroups, List<(IEnumerable<PageOrder>, int[])> invalidGroups) = GetPageOrdersAndLists(input);
 
 			foreach(int[] group in validGroups){
 				int middleIndex = group.Length/2;
@@ -32,7 +32,7 @@ namespace AoC24.Solutions{
 
 		public string PartTwo(List<string> input){
 			int total = 0;
-			(List<PageOrder> pageOrders, List<int[]> validGroups, List<(IEnumerable<PageOrder>, int[])> invalidGroups) = GetPageOrdersAndLists(input);
+			(List<int[]> validGroups, List<(IEnumerable<PageOrder>, int[])> invalidGroups) = GetPageOrdersAndLists(input);
 
 			List<int[]> correctedList = new List<int[]>();
 
@@ -81,7 +81,7 @@ namespace AoC24.Solutions{
 			return retval;
 		}
 
-		private (List<PageOrder>, List<int[]>, List<(IEnumerable<PageOrder>, int[])>) GetPageOrdersAndLists(List<string> input){
+		private (List<int[]>, List<(IEnumerable<PageOrder>, int[])>) GetPageOrdersAndLists(List<string> input){
 			(List<PageOrder> pageOrders, List<int[]> pageGroups) = ParseInput(input);
 
 			List<int[]> validGroups = new List<int[]>();
@@ -97,7 +97,7 @@ namespace AoC24.Solutions{
 				}
 			}
 
-			return (pageOrders, validGroups, invalidGroups);
+			return (validGroups, invalidGroups);
 		}
 
 		private bool IsPageValid(IEnumerable<PageOrder> applicable, int[] page){
