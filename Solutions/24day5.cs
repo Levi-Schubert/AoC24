@@ -20,26 +20,7 @@ namespace AoC24.Solutions{
 		public string PartOne(List<string> input){
 			int total = 0;
 
-			(List<PageOrder> pageOrders, List<int[]> pageGroups) = ParseInput(input);
-
-			List<int[]> validGroups = new List<int[]>();
-
-			foreach (int[] page in pageGroups){
-				IEnumerable<PageOrder> applicable = pageOrders.Where(order =>  Array.IndexOf(page, order.Before) > -1);
-				bool valid = true;
-			
-				foreach(PageOrder order in applicable){
-					int aIndex = Array.IndexOf(page, order.After);
-					int bIndex = Array.IndexOf(page, order.Before);
-					if ((bIndex > aIndex && aIndex != -1)){
-						valid = false;
-						break;
-					}
-				}
-				if(valid){
-					validGroups.Add(page);
-				}
-			}
+			(List<PageOrder> pageOrders, List<int[]> validGroups, List<(IEnumerable<PageOrder>, int[])> invalidGroups) = GetPageOrdersAndLists(input);
 
 			foreach(int[] group in validGroups){
 				int middleIndex = group.Length/2;
@@ -51,8 +32,83 @@ namespace AoC24.Solutions{
 
 		public string PartTwo(List<string> input){
 			int total = 0;
+			(List<PageOrder> pageOrders, List<int[]> validGroups, List<(IEnumerable<PageOrder>, int[])> invalidGroups) = GetPageOrdersAndLists(input);
+
+			List<int[]> correctedList = new List<int[]>();
+
+			//.Item1 .Item2
+			foreach(var group in invalidGroups){
+				int[] corrected = CorrectGroup(group.Item1, group.Item2);
+				if(corrected != null){
+					correctedList.Add(corrected);
+				}
+			}
+
+			foreach(int[] group in correctedList){
+				int middleIndex = group.Length/2;
+				total += group[middleIndex];
+			}
 
 			return $"{total}";
+		}
+
+		private int[] CorrectGroup(IEnumerable<PageOrder> applicable, int[] page){
+			int[] retval = null;
+			List<int> tempPage = new List<int>(page);
+
+			// IEnumerable<PageOrder> sortedApplicable = applicable.Sort()
+
+			foreach(PageOrder order in applicable){
+				(int aIndex, int bIndex) = GetOrderIndexes(page, order);
+				if(aIndex != -1 && bIndex > aIndex){
+					int item = tempPage[bIndex];
+					tempPage.RemoveAt(bIndex);
+					tempPage.Insert(aIndex, item);
+					Console.WriteLine($"correcting [{String.Join(',', tempPage.ToArray())}], Order: {order.Before} before {order.After}");
+				}
+				if(IsPageValid(applicable, tempPage.ToArray())){
+					retval = tempPage.ToArray();
+				}
+			}
+
+			return retval;
+		}
+
+		private (List<PageOrder>, List<int[]>, List<(IEnumerable<PageOrder>, int[])>) GetPageOrdersAndLists(List<string> input){
+			(List<PageOrder> pageOrders, List<int[]> pageGroups) = ParseInput(input);
+
+			List<int[]> validGroups = new List<int[]>();
+			List<(IEnumerable<PageOrder>, int[])> invalidGroups = new List<(IEnumerable<PageOrder>, int[])>();
+
+			foreach (int[] page in pageGroups){
+				IEnumerable<PageOrder> applicable = pageOrders.Where(order =>  Array.IndexOf(page, order.Before) > -1 && Array.IndexOf(page, order.After) > -1);
+				bool valid = IsPageValid(applicable, page);
+				if(valid){
+					validGroups.Add(page);
+				}else{
+					invalidGroups.Add((applicable,page));
+				}
+			}
+
+			return (pageOrders, validGroups, invalidGroups);
+		}
+
+		private bool IsPageValid(IEnumerable<PageOrder> applicable, int[] page){
+			bool valid = true;
+			foreach(PageOrder order in applicable){
+					(int aIndex, int bIndex) = GetOrderIndexes(page, order);
+					if ((bIndex > aIndex && aIndex != -1)){
+						valid = false;
+						break;
+					}
+			}
+			return valid;
+		}
+
+		private (int, int) GetOrderIndexes(int[] page, PageOrder order){
+			int aIndex = Array.IndexOf(page, order.After);
+			int bIndex = Array.IndexOf(page, order.Before);
+			return (aIndex, bIndex);
 		}
 
 		private (List<PageOrder>, List<int[]>) ParseInput(List<string> input){
