@@ -36,9 +36,8 @@ namespace AoC24.Solutions{
 
 			List<int[]> correctedList = new List<int[]>();
 
-			//.Item1 .Item2
 			foreach(var group in invalidGroups){
-				int[] corrected = CorrectGroup(group.Item1, group.Item2);
+				int[]? corrected = CorrectGroup(group.Item1, group.Item2);
 				if(corrected != null){
 					correctedList.Add(corrected);
 				}
@@ -52,22 +51,30 @@ namespace AoC24.Solutions{
 			return $"{total}";
 		}
 
-		private int[] CorrectGroup(IEnumerable<PageOrder> applicable, int[] page){
-			int[] retval = null;
+		private int[]? CorrectGroup(IEnumerable<PageOrder> applicable, int[] page, int pass = 0){
+			int[]? retval = null;
 			List<int> tempPage = new List<int>(page);
 
-			// IEnumerable<PageOrder> sortedApplicable = applicable.Sort()
+			IEnumerable<PageOrder> correct = applicable.Where(po => po.PageOrderValid(tempPage.ToArray()));
+			IEnumerable<PageOrder> incorrect = applicable.Where(po => !po.PageOrderValid(tempPage.ToArray()));
 
-			foreach(PageOrder order in applicable){
-				(int aIndex, int bIndex) = GetOrderIndexes(page, order);
-				if(aIndex != -1 && bIndex > aIndex){
+			foreach(PageOrder order in incorrect){
+				bool ruleValid = order.PageOrderValid(tempPage.ToArray());
+				if(!ruleValid){
+					(int aIndex, int bIndex) = GetOrderIndexes(tempPage.ToArray(), order);
 					int item = tempPage[bIndex];
 					tempPage.RemoveAt(bIndex);
 					tempPage.Insert(aIndex, item);
-					Console.WriteLine($"correcting [{String.Join(',', tempPage.ToArray())}], Order: {order.Before} before {order.After}");
 				}
-				if(IsPageValid(applicable, tempPage.ToArray())){
-					retval = tempPage.ToArray();
+			}
+			correct = applicable.Where(po => po.PageOrderValid(tempPage.ToArray()));
+			incorrect = applicable.Where(po => !po.PageOrderValid(tempPage.ToArray()));
+
+			if(incorrect.Count() == 0){
+				retval = tempPage.ToArray();
+			}else{
+				if(incorrect.Count() > 0 && pass < 1){
+					retval = CorrectGroup(applicable, tempPage.ToArray(), pass + 1);
 				}
 			}
 
@@ -147,6 +154,12 @@ namespace AoC24.Solutions{
 			public PageOrder (int a, int b){
 				this.After = a;
 				this.Before = b;
+			}
+
+			public bool PageOrderValid(int[] group){
+				int aIndex = Array.IndexOf(group, this.After);
+				int bIndex = Array.IndexOf(group, this.Before);
+				return (aIndex < 0 || bIndex < aIndex);
 			}
 		}
 
