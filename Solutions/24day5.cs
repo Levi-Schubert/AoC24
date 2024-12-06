@@ -103,11 +103,10 @@ namespace AoC24.Solutions{
 		private bool IsPageValid(IEnumerable<PageOrder> applicable, int[] page){
 			bool valid = true;
 			foreach(PageOrder order in applicable){
-					(int aIndex, int bIndex) = GetOrderIndexes(page, order);
-					if ((bIndex > aIndex && aIndex != -1)){
-						valid = false;
-						break;
-					}
+				valid = order.PageOrderValid(page);
+				if(!valid){
+					break;
+				}
 			}
 			return valid;
 		}
