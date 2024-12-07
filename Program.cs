@@ -99,6 +99,9 @@ namespace AoC24{
 				case 5:
 					solver = new TwentyFourDayFive();
 					break;
+				case 6:
+					solver = new TwentyFourDaySix();
+					break;
 				default:
 					answer = "invalid day";
 					break;
