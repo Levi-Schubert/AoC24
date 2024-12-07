@@ -61,7 +61,7 @@ namespace AoC24.Solutions{
 			foreach(PageOrder order in incorrect){
 				bool ruleValid = order.PageOrderValid(tempPage.ToArray());
 				if(!ruleValid){
-					(int aIndex, int bIndex) = GetOrderIndexes(tempPage.ToArray(), order);
+					(int aIndex, int bIndex) = order.GetOrderIndexes(tempPage.ToArray());
 					int item = tempPage[bIndex];
 					tempPage.RemoveAt(bIndex);
 					tempPage.Insert(aIndex, item);
@@ -111,12 +111,6 @@ namespace AoC24.Solutions{
 			return valid;
 		}
 
-		private (int, int) GetOrderIndexes(int[] page, PageOrder order){
-			int aIndex = Array.IndexOf(page, order.After);
-			int bIndex = Array.IndexOf(page, order.Before);
-			return (aIndex, bIndex);
-		}
-
 		private (List<PageOrder>, List<int[]>) ParseInput(List<string> input){
 
 			List<PageOrder> pageOrders = new List<PageOrder>();
@@ -156,9 +150,14 @@ namespace AoC24.Solutions{
 			}
 
 			public bool PageOrderValid(int[] group){
+				(int aIndex, int bIndex) = this.GetOrderIndexes(group);
+				return (aIndex < 0 || bIndex < aIndex);
+			}
+
+			public (int, int) GetOrderIndexes(int[] group){
 				int aIndex = Array.IndexOf(group, this.After);
 				int bIndex = Array.IndexOf(group, this.Before);
-				return (aIndex < 0 || bIndex < aIndex);
+				return (aIndex, bIndex);
 			}
 		}
 
